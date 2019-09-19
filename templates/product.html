@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load basetags %}
+
+{% block title %}
+    {{ product.type }}
+{% endblock %}
+
+
+{% block body %}
+
+    <div>
+        نوع:
+    {{ product.type }}
+    </div>
+
+    <div>
+        قیمت:
+    {{ product.price | price_format }}
+    </div>
+
+{% endblock %}
