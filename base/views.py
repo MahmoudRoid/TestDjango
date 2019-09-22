@@ -1,19 +1,28 @@
 import csv
 from datetime import datetime
 
+from django.contrib import messages
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.core.paginator import Paginator
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render, redirect
+from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
 
-from base.models import Product
+from base import Consts
+from base.forms import SignupForm, LoginForm
+from base.models import Product, Member
 
 
-
+@login_required
 def home(request):
-    now = datetime.now()
-    return render(request , 'home.html', {'time': now})
+    products = Product.objects.all()
+    paginator = Paginator(products, Consts.PRODUCT_PER_PAGE)
+    page_number = request.GET.get('page', 1)
+    page = paginator.page(page_number)
+    return render(request, "home.html", {'product_page': page})
 
 
 class ProductView(View):
@@ -22,12 +31,10 @@ class ProductView(View):
         return render(request, 'product.html', {'product': product})
 
 
-
 # def product(request , product_id):
 #     product = get_object_or_404(Product , pk = product_id )
-    # return HttpResponse()
-    # return render(request,'product.html', { 'Product': Product } )
-
+# return HttpResponse()
+# return render(request,'product.html', { 'Product': Product } )
 
 
 class AboutView(TemplateView):
@@ -45,3 +52,39 @@ def report(request):
     writer.writerow(['Second row', 'A', 'B', 'C', '"Testing"', "Here's a quote"])
 
     return response
+
+class SignUpView(FormView):
+    template_name = 'signup.html'
+    form_class = SignupForm
+    success_url = reverse_lazy('login')
+
+def signup(request):
+    form = None
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('login'))  # reverse create a url and paseed to redirect
+
+    else:
+        form = SignupForm()
+
+    return render(request, 'signup.html', {'form': form})
+
+
+def signin(request):
+    form = None
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(username = username ,password = password)
+            if user:
+                # login(request,user)
+                return redirect(reverse('home'))
+
+    form = LoginForm()
+
+    return render(request, 'login.html', {'form': form})
+

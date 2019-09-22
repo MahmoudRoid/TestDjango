@@ -121,3 +121,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 AUTH_USER_MODEL = 'base.Member'
+LOGIN_URL = '/login/'   # to custom login url ( vaghti login_required darim mostaghim be in bere
+LOGIN_REDIRECT_URL="/home/"   # vaghti ke Login be tore auto anjam mishavad in baraye redirect be home niaz ast

@@ -20,6 +20,9 @@ class Product(models.Model):
     class Meta:
         unique_together = ('name', 'type')
 
+    def __str__(self):
+        return "{} - {}".format(self.name,self.type)
+
 
 class Member(AbstractUser):
     pass

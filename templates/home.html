@@ -1,8 +1,40 @@
 {% extends 'base.html' %}
+{% load basetags %}
+{% block title %}
 
-{% block title %} صفحه اصلی {% endblock %}
+{% endblock %}
+
 {% block body %}
 
-    {{ time | date:'Y-m-d' }}
+    زمان:
+    {% get_time "%Y-%m-%d" as current_time %}
+    {{ current_time }}
+
+    <span class="current">
+        <ul>
+        {% for product in product_page.object_list %}
+
+            <li> {{ product }} </li>
+
+        {% endfor %}
+        </ul>
+    </span>
+
+    <div class="pagination">
+    <span class="step-links">
+        {% if product_page.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ product_page.previous_page_number }}">previous</a>
+        {% endif %}
+
+        Page {{ product_page.number }} of {{ product_page.paginator.num_pages }}.
+
+
+        {% if product_page.has_next %}
+            <a href="?page={{ product_page.next_page_number }}">next</a>
+            <a href="?page={{ product_page.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+    </div>
 
 {% endblock %}
