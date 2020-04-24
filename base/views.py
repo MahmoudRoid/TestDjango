@@ -1,11 +1,9 @@
 import csv
-from datetime import datetime
 
-from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.paginator import Paginator
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import View
@@ -13,7 +11,7 @@ from django.views.generic import TemplateView, FormView
 
 from base import Consts
 from base.forms import SignupForm, LoginForm
-from base.models import Product, Member
+from base.models import Product
 
 
 @login_required
@@ -53,17 +51,19 @@ def report(request):
 
     return response
 
+
 class SignUpView(FormView):
     template_name = 'signup.html'
     form_class = SignupForm
     success_url = reverse_lazy('login')
+
 
 def signup(request):
     form = None
     if request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
-            form.save()
+            bb = form.save()
             return redirect(reverse('login'))  # reverse create a url and paseed to redirect
 
     else:
@@ -79,7 +79,7 @@ def signin(request):
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-            user = authenticate(username = username ,password = password)
+            user = authenticate(username=username, password=password)
             if user:
                 # login(request,user)
                 return redirect(reverse('home'))
@@ -87,4 +87,3 @@ def signin(request):
     form = LoginForm()
 
     return render(request, 'login.html', {'form': form})
-

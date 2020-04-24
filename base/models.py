@@ -25,6 +25,7 @@ class Product(models.Model):
 
 
 class Member(AbstractUser):
+    image = models.ImageField(  upload_to= 'images' , blank=True      )
     pass
 
 

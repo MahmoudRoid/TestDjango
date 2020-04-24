@@ -11,7 +11,7 @@ class SignupForm(UserCreationForm):  # az in class ers borde chon mikhastim logi
 
     class Meta:
         model = Member
-        fields = ('first_name','last_name','username','email')
+        fields = ('first_name','last_name','username','email','image')
 
     def clean_agreement(self):
         data = self.cleaned_data['agreement'];
